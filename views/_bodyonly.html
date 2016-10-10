@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="EACIIT">
+
+	<title>EACIIT - Ostro Reporting Tools</title>
+
+	<link rel="shortcut icon" href="{{BaseUrl}}static/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="{{BaseUrl}}static/favicon.ico" type="image/x-icon">
+
+	<script src="{{BaseUrl}}static/js/jquery.min.js"></script>
+  <script src="{{BaseUrl}}static/js/knockout.min.js"></script>
+  <script src="{{BaseUrl}}static/js/ko-mapping.js"></script>
+  <script src="{{BaseUrl}}static/js/kendoui/js/kendo.all.min.js"></script>
+  <script src="{{BaseUrl}}static/js/knockout-kendo.min.js"></script>
+  <script src="{{BaseUrl}}static/js/bootstrap.min.js"></script>
+  <script src="{{BaseUrl}}static/js/bootbox.js"></script>
+  <script src="{{BaseUrl}}static/js/sweet-alert.min.js"></script>
+  <script src="{{BaseUrl}}static/js/moment.min.js"></script>
+  <script src="{{BaseUrl}}static/js/jquery.bootstrap-touchspin.min.js"></script>
+  <script src="{{BaseUrl}}static/js/jquery.circliful.min.js"></script>
+  <script src="{{BaseUrl}}static/js/linq.js"></script>
+  <script src="{{BaseUrl}}static/js/jszip.min.js"></script>
+  <script src="{{BaseUrl}}static/js/ec-common.js"></script>
+
+  <link href="{{BaseUrl}}static/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.default.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.common.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.material.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.common-bootstrap.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.dataviz.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.dataviz.bootstrap.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.dataviz.metro.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.metro.min.css" type="text/css" rel="stylesheet" />
+
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/sweet-alert.css">
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/jquery.bootstrap-touchspin.min.css">
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/default.css">
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/custom.css">
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/loader.css">
+
+	<script type="text/javascript">
+	var Now = new Date();
+	function getQuarter(d) {
+	  d = d || new Date(); // If no date supplied, use today
+	  var q = [1,2,3,4];
+	  return q[Math.floor(d.getMonth() / 3)];
+	}
+	
+	function getFinanceQuarter(d) {
+	  d = d || new Date(); // If no date supplied, use today
+	  var q = [4,1,2,3];
+	  return q[Math.floor(d.getMonth() / 3)];
+	}
+	
+	function getUTCDate(strdate){
+		var d = moment.utc(strdate);
+		return new Date(d.year(), d.month(), d.date(), 0, 0, 0)
+	}
+	function toUTC(d){
+		var year = d.getFullYear();
+		var month = d.getMonth();
+		var date = d.getDate();
+		var hours = d.getHours();
+		var minutes = d.getMinutes();
+		var seconds = d.getSeconds();
+		return moment(Date.UTC(year, month, date, hours, minutes, seconds)).toISOString();
+	}
+
+    var model = {
+      Processing: ko.observable(false),
+      SelectedMenu: ko.observable('dashboard'),
+      PageTitle: ko.observable(''),
+      Breadcrumbs: ko.observableArray([]),
+      MainMenus: ko.observableArray([]),
+      MenuAccess: ko.observableArray([]),
+      UserLogin: ko.observable({
+        UserId: '', UserName: '', ImgPath: '', ImgExt: '', ImgPhoto: '', Department: '', Location: '', Designation: ''
+      })
+    };
+  </script>
+
+  <script id="navbarTemplate" type="text/html">
+        <!-- ko if: Submenus().length==0 -->
+        <li data-bind="css:{active:$root.SelectedMenu()==Group()}, visible: (eval('model.MenuAccess().'+_id()))">
+            <a data-bind="text: Title(), attr:{href:Url()}"></a>
+        </li>
+        <!-- /ko -->
+        <!-- ko if: Submenus().length>0 -->
+        <!-- ko if: eval('model.MenuAccess().'+ _id()) -->
+        <li data-bind="css:{active:$root.SelectedMenu()==Group()}" class="dropdown">
+            <a data-bind="text: Title()" style="cursor:pointer" class="dropdown-toggle" data-toggle="dropdown"></a>
+            <ul class="dropdown-menu" role="menu" data-bind="template:{name:'navbarSubTemplate', foreach:Submenus()}"></ul>
+        </li>
+        <!-- /ko -->
+        <!-- /ko -->
+    </script>
+
+    <script id="navbarSubTemplate" type="text/html">
+        <!-- ko if: Submenus().length==0 -->
+        <!-- ko if: eval('model.MenuAccess().'+ _id()) -->
+        <li data-bind="css:{active:$root.SelectedMenu()==Group()}">
+            <a data-bind="text: Title(), attr:{href:Url()}"></a>
+        </li>
+        <!-- /ko -->
+        <!-- /ko -->
+        <!-- ko if: Submenus().length>0 -->
+        <!-- ko if: eval('model.MenuAccess().'+ _id()) -->
+        <li data-bind="css:{active:$root.SelectedMenu()==Group}, visible: (eval('model.MenuAccess().'+_id())" class="dropdown-submenu">
+            <a data-bind="text: Title()" style="cursor:pointer" class="dropdown-toggle" data-toggle="dropdown"></a>
+            <ul class="dropdown-menu" role="menu" data-bind="template:{name:'navbarSubTemplate', foreach:Submenus()}"></ul>
+        </li>
+        <!-- /ko -->
+        <!-- /ko -->
+    </script>
+</head>
+<body>
+
+<div id="wrapper" class="bodyonly">
+
+	<div class="container-fluid">
+
+		<div class="content">
+			{{.Content}}
+		</div>
+
+	</div>
+
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    try {
+      $('input[type=text].touchspin').TouchSpin({ max: 1000000000000 });
+    }
+    catch(e) {}
+  });
+
+  ko.applyBindings(model);
+</script>
+
+<script type="text/javascript">
+var ChangePassword = {
+  step2: function() {
+    if (!isFormValid(".change-password-modal")) {
+      return;
+    }
+    var lastpassword = $('#lastpassword').val();
+    var newpassword1 = $('#newpassword').val();
+    var newpassword2 = $('#confirmpassword').val();
+    if(newpassword1!=newpassword2){
+      swal("alert", "New Password and Confirm new password are not match", "error");
+    }else if( lastpassword==newpassword2 || lastpassword==newpassword1 ){
+      swal("alert", "Please use different new password", "error");
+    }else{
+      var param = { lastpassword: lastpassword, newpassword: newpassword1 };
+      var url = "{{BaseUrl}}login/changepasswordnew";
+      ajaxPost(url, param, function(data) {
+        if(data == "success"){
+          swal("Success", "Success to Change Password, please re-log in with your new password!", "success");
+          initlaststep();
+          $("#modalChangePassword").modal("hide");
+          window.location.href = '{{BaseUrl}}login/dologout';
+        }else{
+          swal("alert", data, "error");
+        }
+      }, undefined);
+    }
+  }
+};
+
+function initlaststep(){
+  $('#lastpassword').val("");
+  $('#newpassword').val("");
+  $('#confirmpassword').val("");
+};
+
+isFormValid = function (selector) {
+    resetValidation(selector);
+    var $validator = $(selector).data("kendoValidator");
+    return ($validator.validate());
+};
+
+resetValidation = function (selectorID) {
+    var $form = $(selectorID).data("kendoValidator");
+    if ($form == undefined) {
+        $(selectorID).kendoValidator();
+        $form = $(selectorID).data("kendoValidator");
+    }
+
+    $form.hideMessages();
+};
+</script>
+
+</body>
+</html>

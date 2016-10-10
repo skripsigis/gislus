@@ -1,0 +1,271 @@
+<script>
+	model.Processing(false);
+</script>
+<style type="text/css">
+  .step2{
+    display: none;
+  }
+
+</style>
+
+<div class="login-wrapper">
+	<div class="row">
+		<div class="col-md-9 login-info-wrapper">
+			<img src="{{BaseUrl}}static/img/logo.png" />
+		</div>
+		<div class="col-md-3 login-form-wrapper ">
+			<h1 >Login Administration</h1>
+			<div class="login-form-content" data-bind="visible: !(model.Processing())">
+				<div class="row form-group">
+					<label class="control-label col-md-5" for="userid">User ID</label>
+					<div class="col-md-7">
+						<input type="text" id="userid" class="form-control input-sm login-credentials" required placeholder="Type Your User ID" />
+					</div>
+				</div>
+				<div class="row form-group">
+					<label class="control-label col-md-5" for="password">Password</label>
+					<div class="col-md-7">
+						<input type="password" id="password" class="form-control input-sm login-credentials" required placeholder="Type Your Password" />
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-md-7 col-md-offset-5 align-left">
+						<button class="btn btn-sm btn-success" onclick="DoLogin()"><i class="fa fa-lock"></i>&nbsp;&nbsp;Log In</button>
+						<p class="login-forgot" data-bind="visible: false">
+							<a data-toggle="modal" data-target="#modalForgotPassword">Forgot your password?</a>
+						</p>
+					</div>
+				</div>
+				<footer>
+					<p>&copy; Your Name<br />
+	Geographical Information System</p>
+        <span>
+          Licensed for demo - Valid throught 30 Jan 2016
+        </span>
+				</footer>
+			</div>
+			{{template "_loader_alt.html"}}
+		</div>
+	</div>
+</div>
+
+<!-- Form Modal -->
+<div class="modal fade modal-fade-in-scale-up" id="modalForgotPassword" aria-hidden="true"
+aria-labelledby="modalTitle" role="dialog" tabindex="-1">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">×</span>
+      </button>
+      <h4 class="modal-title modal-title">Forgot Password - Step I</h4>
+    </div>
+    <div class="modal-body">
+      <div class="form-input row step1" >
+        <div class="form-group col-md-12">
+          <p class="ket">*Please Complete this survey before update or change password</p>
+        </div>
+        <div class="form-group col-md-12">
+          <label class="control-label col-md-4">Employee ID</label>
+          <div class="control-input col-md-6">
+            <input type="text" name="UserId" id="UserId" class="input-sm form-control" placeholder="Type Employee ID" />
+            <span class="k-invalid-msg" data-for="UserId"></span>
+          </div>
+        </div>
+        <div class="form-group col-md-12">
+          <label class="control-label col-md-4">Email</label>
+          <div class="control-input col-md-6">
+            <input type="email" name="email" id="email" class="input-sm form-control" placeholder="Type Email" />
+            <span class="k-invalid-msg" data-for="email"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-input row step2" >
+        <input type="hidden" name="encr" id="encr" class="input-sm form-control" value="" />
+        <div class="form-group col-md-12">
+          <label class="control-label col-md-4">Last Password</label>
+          <div class="control-input col-md-6">
+            <input type="password" name="lastpassword" id="lastpassword" class="input-sm form-control" placeholder="Input Last Password"/>
+          </div>
+        </div>
+        <div class="form-group col-md-12">
+          <label class="control-label col-md-4">New Password</label>
+          <div class="control-input col-md-6">
+            <input type="password" name="newpassword1" id="newpassword1" class="input-sm form-control" placeholder="Input New Password"/>
+          </div>
+        </div>
+        <div class="form-group col-md-12">
+          <label class="control-label col-md-4">Confirm Password</label>
+          <div class="control-input col-md-6">
+            <input type="password" name="newpassword2" id="newpassword2" class="input-sm form-control" placeholder="Input New Password Again"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default margin-0" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary step1" onclick="ForgotPassword.step1()">Submit</button>
+        <button type="button" class="btn btn-primary step2" onclick="ForgotPassword.step2()">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Form Modal -->
+
+<script>
+function DoLogin() {
+	var userId = $('#userid').val();
+	var passwd = $('#password').val();
+	var url = "{{BaseUrl}}login/dologin";
+	var param = { UserId: userId, Password: passwd };
+  
+	model.Processing(true);
+	ajaxPost(url, param, function(data){
+    var redirect = "";
+		if(data.IsLogged) {
+      $.cookie('approved', true, { expires: 7, path: '/' });
+      switch(data.DefaultPage){
+        case "dashboard": redirect = "{{BaseUrl}}dashboard/default";
+        break;
+        case "master_employee": redirect = "{{BaseUrl}}master/employee";
+        break;
+        case "master_designation": redirect = "{{BaseUrl}}master/designation";
+        break;
+        case "master_department": redirect = "{{BaseUrl}}master/department";
+        break;
+        case "master_location": redirect = "{{BaseUrl}}master/location";
+        break;
+        case "master_competency": redirect = "{{BaseUrl}}master/competency";
+        break;
+        case "master_measurement": redirect = "{{BaseUrl}}master/measurement";
+        break;
+        case "master_role": redirect = "{{BaseUrl}}master/role";
+        break;
+        case "master_dateprocess": redirect = "{{BaseUrl}}master/dateprocess";
+        break;
+        case "assessment": redirect = "{{BaseUrl}}assessment/default";
+        break;
+        case "assessment_history": redirect = "{{BaseUrl}}assessment/history";
+        break;
+        case "assessment_approval": redirect = "{{BaseUrl}}assessment/approval";
+        break;
+        case "fact_gathering": redirect = "{{BaseUrl}}factgathering/default";
+        break;
+        // case "fact_gathering_history": redirect = "{{BaseUrl}}factgathering/history";
+        // break;
+        case "notif_pending": redirect = "{{BaseUrl}}notification/pending";
+        break;
+        case "notif_pending_assessor": redirect = "{{BaseUrl}}notification/pendingassessor";
+        break;
+        case "notif_info": redirect = "{{BaseUrl}}notification/info";
+        break;
+        case "notif_history": redirect = "{{BaseUrl}}notification/history";
+        break;
+        default: redirect = '{{BaseUrl}}dashboard/default';
+      }
+
+      window.location.href = redirect;
+			model.Processing(false);
+		}
+		else {
+			swal('Login Failed!', data.Message, 'error');
+			model.Processing(false);
+		}
+	}, undefined);
+}
+</script>
+
+<script type="text/javascript">
+var ForgotPassword = {
+  step1: function() {
+    if (!isFormValid(".modal-body")) {
+      return;
+    }
+
+    var UserId = $('#UserId').val();
+    var email = $('#email').val();
+    var param = { UserId: UserId, email: email };
+    var url = "{{BaseUrl}}login/forgotpasswordstep1";
+    ajaxPost(url, param, function(data) {
+      if (data != "") {
+        initfirststep();
+        initlaststep(data);
+      } else{
+        swal("alert", "Something Error with this data, please check your Employee ID or Email", "error");
+      }
+    }, undefined);
+  },
+  step2: function() {
+    var encr = $('#encr').val();
+    var lastpassword = $('#lastpassword').val();
+    var newpassword1 = $('#newpassword1').val();
+    var newpassword2 = $('#newpassword2').val();
+    if(newpassword1!=newpassword2){
+      swal("alert", "New Password didnt Same", "error");
+    }else if( lastpassword==newpassword2 || lastpassword==newpassword1 ){
+      swal("alert", "Please Use Different password", "error");
+    }else{
+      var param = { encr: encr, lastpassword: lastpassword, newpassword: newpassword1 };
+      var url = "{{BaseUrl}}login/forgotpasswordstep2";
+      ajaxPost(url, param, function(data) {
+        if(data == "success"){
+          swal("Success", "Success Please Login", "success");
+          initfirststep();
+          $("#modalForgotPassword").modal("hide");
+          setTimeout(location.reload(), 50000);
+        }else{
+          swal("alert", data, "error");
+        }
+      }, undefined);
+    }
+  }
+};
+
+function initfirststep(){
+  $('#email').val("");
+  $('#UserId').val("");
+  $('.modal-title').html("Forgot Password - Step I");
+  $('.step1').show();
+  $('.step2').hide();
+  $("#UserId").attr('required','required');
+  $("#email").attr('required','required');
+};
+
+function initlaststep(data){
+  $('#encr').val("");
+  $('#lastpassword').val("");
+  $('#newpassword1').val("");
+  $('#newpassword2').val("");
+  $('.modal-title').html("Forgot Password - Last Step");
+  $('.step1').hide();
+  $('.step2').show();
+  $('#encr').val(data);
+  $("#UserId").attr('required','');
+  $("#email").attr('required','');
+};
+
+isFormValid = function (selector) {
+    resetValidation(selector);
+    var $validator = $(selector).data("kendoValidator");
+    return ($validator.validate());
+};
+
+resetValidation = function (selectorID) {
+    var $form = $(selectorID).data("kendoValidator");
+    if ($form == undefined) {
+        $(selectorID).kendoValidator();
+        $form = $(selectorID).data("kendoValidator");
+    }
+
+    $form.hideMessages();
+};
+$(document).ready(function(){
+  $("*.login-credentials").keypress(function(e) {
+    if(e.which == 13) {
+        DoLogin();
+    }
+  });
+});
+</script>
+<script src="{{BaseUrl}}static/js/jquery.cookie.js"></script>

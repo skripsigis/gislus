@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="EACIIT">
+
+  <title>EACIIT - Ostro Reporting Tools</title>
+
+  <link rel="shortcut icon" href="{{BaseUrl}}static/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="{{BaseUrl}}static/favicon.ico" type="image/x-icon">
+
+  <script src="{{BaseUrl}}static/js/jquery.min.js"></script>
+  <script src="{{BaseUrl}}static/js/knockout.min.js"></script>
+  <script src="{{BaseUrl}}static/js/ko-mapping.js"></script>
+  <script src="{{BaseUrl}}static/js/kendoui/js/kendo.all.min.js"></script>
+  <script src="{{BaseUrl}}static/js/knockout-kendo.min.js"></script>
+  <script src="{{BaseUrl}}static/js/bootstrap.min.js"></script>
+  <script src="{{BaseUrl}}static/js/bootbox.js"></script>
+  <script src="{{BaseUrl}}static/js/sweet-alert.min.js"></script>
+  <script src="{{BaseUrl}}static/js/toastr.min.js"></script>
+  <script src="{{BaseUrl}}static/js/moment.min.js"></script>
+  <script src="{{BaseUrl}}static/js/jquery.bootstrap-touchspin.min.js"></script>
+  <script src="{{BaseUrl}}static/js/jquery.circliful.min.js"></script>
+  <script src="{{BaseUrl}}static/js/linq.js"></script>
+  <script src="{{BaseUrl}}static/js/custom.js"></script>
+  <script src="{{BaseUrl}}static/js/underscore-min.js"></script>
+  <script src="{{BaseUrl}}static/js/jszip.min.js"></script>
+  <script src="{{BaseUrl}}static/js/ec-common.js"></script>
+  <script src="{{BaseUrl}}static/js/jquery.cookie.js"></script>
+
+  <link href="{{BaseUrl}}static/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.common.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.default.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.material.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.common-bootstrap.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.dataviz.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.dataviz.bootstrap.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.dataviz.metro.min.css" type="text/css" rel="stylesheet" />
+  <link href="{{BaseUrl}}static/js/kendoui/styles/kendo.metro.min.css" type="text/css" rel="stylesheet" />
+
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/sweet-alert.css">
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/toastr.min.css">
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/jquery.bootstrap-touchspin.min.css">
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/default.css">
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/custom.css">
+  <link rel="stylesheet" type="text/css" href="{{BaseUrl}}static/css/loader.css">
+
+  <script type="text/javascript">
+        var Now = new Date();
+        function getQuarter(d) {
+          d = d || new Date(); // If no date supplied, use today
+          var q = [1,2,3,4];
+          return q[Math.floor(d.getMonth() / 3)];
+        }
+        function getFinanceQuarter(d) {
+          d = d || new Date(); // If no date supplied, use today
+          var q = [4,1,2,3];
+          return q[Math.floor(d.getMonth() / 3)];
+        }
+
+        function getUTCDate(strdate){
+            var d = moment.utc(strdate);
+            return new Date(d.year(), d.month(), d.date(), 0, 0, 0)
+        }
+        function toUTC(d){
+            var year = d.getFullYear();
+            var month = d.getMonth();
+            var date = d.getDate();
+            var hours = d.getHours();
+            var minutes = d.getMinutes();
+            var seconds = d.getSeconds();
+            return moment(Date.UTC(year, month, date, hours, minutes, seconds)).toISOString();
+        }
+
+    var model = {
+      Processing: ko.observable(false),
+      SelectedMenu: ko.observable('dashboard'),
+      PageTitle: ko.observable(''),
+      Breadcrumbs: ko.observableArray([]),
+      MainMenus: ko.observableArray([]),
+      MenuAccess: ko.observableArray([]),
+      UserLogin: ko.observable({
+        UserId: '', UserName: '', ImgPath: '', ImgExt: '', ImgPhoto: '', Department: '', Location: '', Designation: ''
+      })
+    };
+
+    function MenuItem(id, url, title, group, submenus) {
+        var obj = {
+            _id: ko.observable(id),
+            Group: ko.observable(group),
+            Title: ko.observable(title == undefined ? id : title),
+            Url: ko.observable(url),
+            Submenus: ko.observableArray(submenus)
+        };
+
+        return obj;
+    };
+
+    var menus = [
+      new MenuItem("dashboard", "{{BaseUrl}}dashboard/default", "Dashboard", "dashboard", []),
+      new MenuItem("Lifting", "{{BaseUrl}}dashboard/default", "Lifting Analytic", "Lifting", []),
+      new MenuItem("databrowser", "{{BaseUrl}}databrowser/default", "Data Browser", "databrowser", []),  
+      new MenuItem("dataentry", "#", "Data Master", "dataentry", [
+        new MenuItem("data-upload", "{{BaseUrl}}dataentry/upload", "Rig Data", "data-upload", []),
+        new MenuItem("data-breakdown", "{{BaseUrl}}dataentry/breakdown", "Lifting", "data-breakdown", []),
+      ]),  
+    ];
+
+    model.MainMenus(menus);
+  </script>
+
+  <script id="navbarTemplate" type="text/html">
+        <!-- ko if: Submenus().length==0 -->
+        <li data-bind="css:{active:$root.SelectedMenu()==Group()}, visible: true">
+            <a data-bind="text: Title(), attr:{href:Url()}"></a>
+        </li>
+        <!-- /ko -->
+        <!-- ko if: Submenus().length>0 -->
+        <li data-bind="css:{active:$root.SelectedMenu()==Group()}" class="dropdown">
+            <a data-bind="text: Title()" style="cursor:pointer" class="dropdown-toggle" data-toggle="dropdown"></a>
+            <ul class="dropdown-menu" role="menu" data-bind="template:{name:'navbarSubTemplate', foreach:Submenus()}"></ul>
+        </li>
+        <!-- /ko -->
+    </script>
+
+    <script id="navbarSubTemplate" type="text/html">
+        <!-- ko if: Submenus().length==0 -->
+        <li data-bind="css:{active:$root.SelectedMenu()==Group()}">
+            <a data-bind="text: Title(), attr:{href:Url()}"></a>
+        </li>
+        <!-- /ko -->
+        <!-- ko if: Submenus().length>0 -->
+        <li data-bind="css:{active:$root.SelectedMenu()==Group}, visible: true" class="dropdown-submenu">
+            <a data-bind="text: Title()" style="cursor:pointer" class="dropdown-toggle" data-toggle="dropdown"></a>
+            <ul class="dropdown-menu" role="menu" data-bind="template:{name:'navbarSubTemplate', foreach:Submenus()}"></ul>
+        </li>
+        <!-- /ko -->
+    </script>
+</head>
+<body>
+
+<div id="wrapper">
+
+  <header>
+    <nav class="navbar navbar-default navbar-static-top" role="navigation">
+      <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{BaseUrl}}dashboard/default"><img src="{{BaseUrl}}static/img/logo-header.png" height="48" /><span>Ostro HR</span></a>
+            </div>
+
+          <ul class="nav navbar-toolbar navbar-right navbar-toolbar-right user-info">
+            <li class="dropdown">
+              <a class="navbar-avatar dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false" data-animation="scale-up" role="button">
+                <span class="avatar avatar-online">
+                  <img data-bind="attr: { 'src': (model.UserLogin().ImgPhoto==''?'{{BaseUrl}}static/photos/non-profile.jpg':model.UserLogin().ImgPhoto), 'alt': model.UserLogin().UserId }" />
+                  <span></span>&nbsp;
+                  <i class="fa fa-caret-down"></i>
+                </span>
+              </a>
+              <ul class="dropdown-menu" role="menu">
+                <li role="presentation">
+                  <a data-toggle="modal" class="change-pasword" data-target="#modalChangePassword" role="menuitem"><i class="fa fa-user" aria-hidden="true"></i> Change Password</a>
+                </li>
+                <li class="divider" role="presentation"></li>
+                <li role="presentation">
+                  <a href="{{BaseUrl}}login/dologout" class="logout" role="menuitem"><i class="fa fa-unlock" aria-hidden="true"></i> Logout</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <div id="main-navbar" class="container-fluid navbar-nav-wrapper">
+          <a id="icon-menu" class="navbar-brand hidden-xs" href="{{BaseUrl}}dashboard/default"><img src="{{BaseUrl}}static/favicon.ico" /></a>
+          <ul class="nav navbar-nav" data-bind="template:{name:'navbarTemplate', foreach:model.MainMenus}"></ul>
+        </div>
+      </nav>
+  </header>
+
+  <div class="container-fluid">
+
+    <div id="main-content" class="content">
+      {{.Content}}
+    </div>
+
+  </div>
+
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    try {
+      $('input[type=text].touchspin').TouchSpin({ max: 1000000000000 });
+    }
+    catch(e) {}
+    $('[data-toggle="tooltip"]').tooltip();
+
+    var tempNoValue = 0;
+    $('.input-number').on('focus', function(){
+      tempNoValue = $(this).val();
+      $(this).val('');
+    });
+    // $('.input-number').on('keyup', function(){
+    //   var currValue = parseFloat($(this).val().replaceAll(',',''));
+    //   $(this).val(currValue.toMoney(0));
+    // });
+    $('.input-number').on('focusout', function(){
+      var value = $(this).val();
+      if(value=='') {
+        $(this).val(tempNoValue);
+      }
+    });
+    $('.input-number').on('keydown', function (e) {
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+                 // do nothing
+                 return;
+        }
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+  });
+
+  String.prototype.replaceAll = function(search, replacement) {
+      var target = this;
+      return target.replace(new RegExp(search, 'g'), replacement);
+  };
+
+  Number.prototype.toMoney = function(c, d, t){
+      var n = this, 
+      c = isNaN(c = Math.abs(c)) ? 2 : c, 
+      d = d == undefined ? "." : d, 
+      t = t == undefined ? "," : t, 
+      s = n < 0 ? "-" : "", 
+      i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+      j = (j = i.length) > 3 ? j % 3 : 0;
+     return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+   };
+
+   function ShowModal(modalId, showhide) {
+    if(showhide=='show') {
+      $('#'+modalId).modal({
+              backdrop: 'static',
+              keyboard: false, 
+              show: showhide
+          });
+    } else {
+      $('#'+modalId).modal('hide');
+    }
+   }
+
+  ko.applyBindings(model);
+</script>
+
+</body>
+</html>
