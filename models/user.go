@@ -1,7 +1,7 @@
 package models
 
 import (
-	"Skripsi/gisdel/library/orm"
+	"Skripsi/gislus/library/orm"
 	"gopkg.in/mgo.v2/bson"
 )
 

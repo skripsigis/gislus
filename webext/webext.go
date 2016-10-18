@@ -2,15 +2,15 @@ package webext
 
 import (
 	"bufio"
-	. "Skripsi/gisdel/webapp/controllers"
+	. "Skripsi/gislus/webapp/controllers"
 	"fmt"
 	"os"
 	"strings"
 
-	"Skripsi/gisdel/library/dbox"
-	_ "Skripsi/gisdel/library/dbox/dbc/mongo"
-	"Skripsi/gisdel/library/knot/knot.v1"
-	"Skripsi/gisdel/library/orm"
+	"Skripsi/gislus/library/dbox"
+	_ "Skripsi/gislus/library/dbox/dbc/mongo"
+	"Skripsi/gislus/library/knot/knot.v1"
+	"Skripsi/gislus/library/orm"
 )
 
 var (
@@ -30,12 +30,13 @@ func init() {
 	baseCont := new(BaseController)
 	baseCont.Ctx = ctx
 
-	app := knot.NewApp("ostroreport")
+	app := knot.NewApp("gisapp")
 	app.ViewsPath = wd + "views/"
 
 	// register controllers
 	app.Register(&LoginController{baseCont})
 	app.Register(&DashboardController{baseCont})
+	app.Register(&LiftingController{baseCont})
 
 	app.Static("static", wd+"assets")
 	app.LayoutTemplate = "_layout.html"

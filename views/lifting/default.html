@@ -1,0 +1,168 @@
+<script>
+model.SelectedMenu('{{.SelectedMenu}}');
+</script>
+
+<div class="row">
+    <div class="prpl10" >
+        {{template "_filter.html"}}
+    </div>
+</div>
+
+<div class="row">
+	<div class="panel-body" >
+		
+		<div class="col-md-6">
+			<div class="row">
+				<div class="col-md-12">
+					<div id="chartProduction"></div>
+				</div>    
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="row">
+				<div class="col-md-12">
+					<div id="chartDrilling"></div>
+				</div>    
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	model.dumData = ko.observableArray([
+{ "day": "01", "value": 123, "userColor": "#ffd600" },
+{ "day": "02", "value": 543, "userColor": "#ffd600" },
+{ "day": "03", "value": 354, "userColor": "#ffd600" },
+{ "day": "04", "value": 435, "userColor": "#ffd600" },
+{ "day": "05", "value": 344, "userColor": "#ffd600" },
+{ "day": "06", "value": 124, "userColor": "#ffd600" },
+{ "day": "07", "value": 421, "userColor": "#ffd600" },
+{ "day": "08", "value": 241, "userColor": "#ffd600" },
+{ "day": "09", "value": 255, "userColor": "#ffd600" },
+{ "day": "10", "value": 333, "userColor": "#ffd600" },
+
+{ "day": "11", "value": 457, "userColor": "#ffd600" },
+{ "day": "12", "value": 452, "userColor": "#ffd600" },
+{ "day": "13", "value": 124, "userColor": "#ffd600" },
+{ "day": "14", "value": 442, "userColor": "#ffd600" },
+{ "day": "15", "value": 644, "userColor": "#ffd600" },
+{ "day": "16", "value": 421, "userColor": "#ffd600" },
+{ "day": "17", "value": 124, "userColor": "#ffd600" },
+{ "day": "18", "value": 121, "userColor": "#ffd600" },
+{ "day": "19", "value": 124, "userColor": "#ffd600" },
+{ "day": "20", "value": 423, "userColor": "#ffd600" },
+
+{ "day": "21", "value": 240, "userColor": "#ffd600" },
+{ "day": "22", "value": 244, "userColor": "#ffd600" },
+{ "day": "23", "value": 120, "userColor": "#ffd600" },
+{ "day": "24", "value": 121, "userColor": "#ffd600" },
+{ "day": "25", "value": 345, "userColor": "#ffd600" },
+{ "day": "26", "value": 453, "userColor": "#ffd600" },
+{ "day": "27", "value": 112, "userColor": "#ffd600" },
+{ "day": "28", "value": 321, "userColor": "#ffd600" },
+{ "day": "29", "value": 212, "userColor": "#ffd600" },
+{ "day": "30", "value": 214, "userColor": "#ffd600" },
+
+{ "day": "31", "value": 122, "userColor": "#ffd600" },
+]);
+
+	function initChart(){
+           $("#chartProduction").kendoChart({
+                dataSource: {
+                    data: model.dumData()
+                },
+                title: {
+                    align: "left",
+                    text: "Production January 2016"
+                },
+                legend: {
+                    visible: false
+                },
+                seriesDefaults: {
+                    type: "column",
+                    labels: {
+                        visible: true,
+                        background: "transparent"
+                    }
+                },
+                series: [{
+                	name: "Production",
+                    field: "value",
+                    colorField: "userColor"
+                }],
+                valueAxis: {
+                    majorGridLines: {
+                        visible: false
+                    },
+                    title: {
+                        text: "Production",
+                        font: '14px Source Sans Pro, Lato , Open Sans , Helvetica Neue, Arial, sans-serif',
+                        color: "#585555",
+						visible: true,
+                    },
+                    // visible: false
+                },
+                categoryAxis: {
+                    field: "day",
+                    majorGridLines: {
+                        visible: false
+                    },
+                },
+                 tooltip: {
+                            visible: true,
+                            template: "#:series.name# #: category #  January 2016 : #: kendo.format('{0:N2}',value) # ",
+                        }
+            });
+
+			$("#chartDrilling").kendoChart({
+                dataSource: {
+                    data: model.dumData()
+                },
+                title: {
+                    align: "left",
+                     text: "Drilling January 2016"
+                },
+                legend: {
+                    visible: false
+                },
+                seriesDefaults: {
+                	name : "Drilling",
+                    type: "column",
+                    labels: {
+                        visible: true,
+                        background: "transparent"
+                    }
+                },
+                series: [{
+                    field: "value",
+                }],
+     
+				valueAxis: {
+                    majorGridLines: {
+                        visible: false
+                    },
+                    title: {
+                        text: "Drilling",
+                        font: '14px Source Sans Pro, Lato , Open Sans , Helvetica Neue, Arial, sans-serif',
+                        color: "#585555",
+						visible: true,
+                    },
+                },
+                categoryAxis: {
+                    field: "day",
+                    majorGridLines: {
+                        visible: false
+                    },
+
+                },
+                tooltip: {
+                            visible: true,
+                            template: "#:series.name# #: category #  January 2016 : #: kendo.format('{0:N2}',value) # ",
+                        }
+            });
+
+	}
+
+	initChart()
+</script>
+

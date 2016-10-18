@@ -1,4 +1,8 @@
 
+<script>
+model.SelectedMenu('{{.SelectedMenu}}');
+</script>
+
 <style>
     .map {
         height: 460px;
@@ -19,6 +23,7 @@
     .panC{
         text-align: center;
     }
+
 </style>
 
 <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false"></script>
@@ -35,70 +40,41 @@
             { "RigID" : "RigID_1", "RigName" : "RigName_1", "WellID" : "WellID_1",  "WellName" : "WellName_1",  "PhaseID" : "PhaseID_1",  "PhaseDesc" : "PhaseDesc_1",  "Depth" : 0.235, "PTTotal" : 0.115,  "PTRatio" : 0.187, "NPTTotal" : 0.125,  "NPTRatio" : 0.117, "Cost" : 2.125,  "Days" : 1, "Status" : "Active" },
             { "RigID" : "RigID_1", "RigName" : "RigName_1", "WellID" : "WellID_1",  "WellName" : "WellName_1",  "PhaseID" : "PhaseID_1",  "PhaseDesc" : "PhaseDesc_1",  "Depth" : 0.235, "PTTotal" : 0.115,  "PTRatio" : 0.187, "NPTTotal" : 0.125,  "NPTRatio" : 0.117, "Cost" : 2.125,  "Days" : 1, "Status" : "Active" },
         ])
+
+    model.totalData1 = ko.observable(124);
+    model.totalData2 = ko.observable(354);
+    model.totalData3 = ko.observable(241);
+    model.totalData4 = ko.observable(216);
 </script>
 
 <!-- HTML -->
 
 <div class="row">
-
+    <div class="prpl10" >
+        {{template "_filter.html"}}
+    </div>
 </div>
  
-<div class="row">
-        
-    <div class="MH col-md-12">
+<div class="row prpl10 align-right">
+    <div class="control-summary left-border-org">
+        <label class="summary-header">Total Turbine</label><br />
+        <label id="totalturbinealarm" class="summary-number" data-bind="text:model.totalData1()">0</label>
+    </div>
+    <div class="control-summary left-border-green">
+        <label class="summary-header">Total Data</label><br />
+        <label id="totaldataalarm" class="summary-number" data-bind="text:model.totalData2()">0</label>
+    </div>
 
-        <div class="container-detail-cust">
-            <ul class="stat-aply">
-                <li class="col-md-3 col-xs-12">
-                    <a>
-                        <i class="fa fa-credit-card"></i>
-                        Outstanding :
-                        <br />
-                        <label >43</label>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="container-detail-cust">
-            <ul class="stat-aply">
-                <li class="col-md-3 col-xs-12">
-                    <a>
-                        <i class="fa fa-archive"></i>
-                        Tot Data :
-                        <br />
-                        <label >234</label>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="container-detail-cust">
-            <ul class="stat-aply">
-                <li class="col-md-3 col-xs-12">
-                    <a>
-                        <i class="fa fa-money"></i>
-                        Overhead Expenses :
-                        <br />
-                        <label >342</label>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        
-        <div class="container-detail-cust">
-            <ul class="stat-aply">
-                <li class="col-md-3 col-xs-12">
-                    <a>
-                        <i class="fa fa-briefcase"></i>
-                        Profit/Loss :
-                        <br />
-                        <label >523</label>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
+    <div class="control-summary left-border-org">
+        <label class="summary-header">Total Turbine</label><br />
+        <label id="totalturbinealarm" class="summary-number" data-bind="text:model.totalData3()">0</label>
+    </div>
+    <div class="control-summary left-border-green">
+        <label class="summary-header">Total Data</label><br />
+        <label id="totaldataalarm" class="summary-number" data-bind="text:model.totalData4()">0</label>
+    </div>
+    <div class="tab-pane-content">
+        <div id="dataGridAlarm" class="grid-custom"></div>
     </div>
 </div>
 
@@ -191,7 +167,7 @@ MarkerFirstLook = [];
 
         var infoWindow = new google.maps.InfoWindow({ content: infotext });
 
-        var logo = "static/img/marker-red2.png";//status == "Active" ? "res/Content/Images/marker-green2.png" : "res/Content/Images/marker-red2.png";
+        var logo = "{{BaseUrl}}static/img/marker-red2.png";//status == "Active" ? "res/Content/Images/marker-green2.png" : "res/Content/Images/marker-red2.png"; "{{BaseUrl}}/static/DOR-logo.png"
         var geometry = new google.maps.LatLng(-7.1780172, 111.8539478);
 
         var marker = new google.maps.Marker({

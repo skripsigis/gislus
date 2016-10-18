@@ -1,7 +1,7 @@
 package helper
 
 import (
-	_ "Skripsi/gisdel/webapp/models"
+	_ "Skripsi/gislus/webapp/models"
 	"fmt"
 	"os"
 	"path/filepath"
